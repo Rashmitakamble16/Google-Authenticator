@@ -35,23 +35,15 @@ namespace AuthenticationApi.Controllers
         [HttpGet("setup")]
         public ActionResult GoogleAuthSetup(string company, string email)
         {
-            // var user = User.Identity.Name; // Retrieve the current user's identity
             var secret = KeyGeneration.GenerateRandomKey(20);
             var base32Secret = Base32Encoding.ToString(secret);
             PrivateKey = base32Secret; 
-            //var secretkey = _AppSettings.Secret;
             TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
             SetupCode setupInfo = tfa.GenerateSetupCode(company, email, base32Secret, false, 3);
 
             string qrCodeImageUrl = setupInfo.QrCodeSetupImageUrl;
             string manualEntrySetupCode = setupInfo.ManualEntryKey;
-
-            //var qrCode = new PngByteQRCode(qrCodeImageUrl);
-            //var qrCodeImage = qrCode.GetGraphic(20);
-
-            //// Return the QR code image to the user
-            //return File(qrCodeImage, "image/png");
-
+            
             return Ok(setupInfo);
         }
 
@@ -60,8 +52,6 @@ namespace AuthenticationApi.Controllers
         [HttpPost("verify")]
         public ActionResult VerifyGoogleAuth(string ClientCode, string clientsecretkey)
         {
-            
-            // var user = User.Identity.Name;
             var secretkey = clientsecretkey;
             TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
             bool isValid = tfa.ValidateTwoFactorPIN(secretkey, ClientCode);
@@ -70,7 +60,7 @@ namespace AuthenticationApi.Controllers
 
             if (currentKey == ClientCode && isValid)
             {
-                    // Two-factor authentication succeeded; you can proceed with the protected action.
+                  // Two-factor authentication succeeded; you can proceed with the protected action.
                  return Ok("Two-factor authentication succeeded");
                 
             }
@@ -80,6 +70,5 @@ namespace AuthenticationApi.Controllers
                 return BadRequest("Two-factor authentication failed");
             }
         }
-        // ...
     }
 }
