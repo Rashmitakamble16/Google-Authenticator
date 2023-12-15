@@ -17,9 +17,6 @@ namespace AuthenticationApi.Controllers
     [Route("api/twofactor")]
     public class TwoFactorController : ControllerBase
     {
-
-
-      
         private readonly AppSettings _AppSettings;
 
         public TwoFactorController(
